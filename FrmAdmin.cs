@@ -8,10 +8,11 @@ namespace ClubDeportivo
 public class FrmAdmin : Form
 {
     private SistemaClub sistema;
-    private Button btnListarSocios;
-        private Button btnListarNoSocios;
+    private Button btnListarSociosCuotaVencida;
         private Button btnRegistrarSocio;
+        private Button btnRegistrarNoSocio;//nuevo
         private Button btnCerrarSesion;
+        
         
 
         public FrmAdmin(SistemaClub sistemaClub)
@@ -26,30 +27,33 @@ public class FrmAdmin : Form
         this.Size = new Size(350, 250);
         this.StartPosition = FormStartPosition.CenterScreen;
 
-        btnListarSocios = new Button();
-        btnListarSocios.Text = "Listar Socios";
-            btnListarSocios.Size = new Size(130, 30);
-        btnListarSocios.Location = new Point(100, 30);
+        btnListarSociosCuotaVencida = new Button();
+        btnListarSociosCuotaVencida.Text = "Vencimiento de Cuotas";
+        btnListarSociosCuotaVencida.Size = new Size(130, 30);
+        btnListarSociosCuotaVencida.Location = new Point(100, 30);
         //btnListarSocios.Click += (s, e) => new FrmListarSocios(sistema).ShowDialog();
   
-        this.Controls.Add(btnListarSocios);
+        this.Controls.Add(btnListarSociosCuotaVencida);
 
-            btnListarNoSocios = new Button();
-            btnListarNoSocios.Text = "Listar No Socios";
-            btnListarNoSocios.Size = new Size(130, 30);
-            btnListarNoSocios.Location = new Point(100, 70);
-            //btnListarNoSocios.Click += (s, e) => new FrmListarNoSocios(sistema).ShowDialog();
-            this.Controls.Add(btnListarNoSocios);
+            
 
             btnRegistrarSocio = new Button();
         btnRegistrarSocio.Text = "Registrar Socio";
              btnRegistrarSocio.Size = new Size(130, 30);
-            btnRegistrarSocio.Location = new Point(100, 110);
+            btnRegistrarSocio.Location = new Point(100, 70);
         btnRegistrarSocio.Click += (s, e) => new FrmRegistroSocio(sistema).ShowDialog();
         this.Controls.Add(btnRegistrarSocio);
 
-          
-           
+            //nuevo
+            btnRegistrarNoSocio = new Button();
+            btnRegistrarNoSocio.Text = "Registrar NoSocio";
+            btnRegistrarNoSocio.Size = new Size(130, 30);
+            btnRegistrarNoSocio.Location = new Point(100, 110);
+           // btnRegistrarNoSocio.Click += (s, e) => new FrmRegistroNoSocio(sistema).ShowDialog();
+            this.Controls.Add(btnRegistrarNoSocio);
+
+
+
             btnCerrarSesion = new Button();
             btnCerrarSesion.Text = "Cerrar sesión";
             btnCerrarSesion.Size = new Size(130, 30);

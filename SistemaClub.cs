@@ -9,6 +9,7 @@ namespace ClubDeportivo
     {
         private readonly DatabaseContext _dbContext;
 
+        //constructor
         public SistemaClub()
         {
             _dbContext = new DatabaseContext();
@@ -16,7 +17,8 @@ namespace ClubDeportivo
             CargarSocios();
         }
 
-        public List<Socio> Socios { get; set; }
+        //
+        public List<Socio> Socios { get; set; }//guardar socios en memoria para manipular
 
         public bool ValidarAdmin(string usuario, string clave)
         {

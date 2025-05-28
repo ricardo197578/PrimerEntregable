@@ -23,14 +23,16 @@ namespace ClubDeportivo
                 SQLiteConnection.CreateFile(_databasePath);
             }
 
-            //_connection = new SQLiteConnection($"Data Source={_databasePath};Version=3;");
-            //_connection.Open();
             _connection = new SQLiteConnection(string.Format("Data Source={0};Version=3;", _databasePath));
             _connection.Open();
 
+            //SIEMPRE VERIFICA Y CREA TABLAS QUE NO ESIXTEN
+            CreateTables();
+
+            //SOLO POR AHORA CREA ADMIN SIEMPRE POR DEFECTO VER SI DEBE SER ASI
             if (!databaseExists)
             {
-                CreateTables();
+                
                 CrearAdminPorDefecto();
             }
         }
@@ -65,6 +67,106 @@ namespace ClubDeportivo
                 )";
                 command.ExecuteNonQuery();
 
+
+                // Tabla NoSocios (extiende Personas)
+                command.CommandText = @"
+                CREATE TABLE IF NOT EXISTS NoSocios (
+                    Dni TEXT PRIMARY KEY,
+                    FechaRegistro TEXT NOT NULL,
+                    FOREIGN KEY (Dni) REFERENCES Personas(Dni)
+                )";
+                command.ExecuteNonQuery();
+
+                // Tabla Profesores (extiende Personas)
+                command.CommandText = @"
+                CREATE TABLE IF NOT EXISTS Profesores (
+                    Dni TEXT PRIMARY KEY,
+                    Legajo TEXT NOT NULL,
+                    FechaContratacion TEXT NOT NULL,
+                    EsTitular INTEGER NOT NULL,
+                    FOREIGN KEY (Dni) REFERENCES Personas(Dni)
+                )";
+                command.ExecuteNonQuery();
+
+                // Tabla Actividades
+                command.CommandText = @"
+                CREATE TABLE IF NOT EXISTS Actividades (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    Nombre TEXT NOT NULL,
+                    Descripcion TEXT,
+                    Horario TEXT,
+                    ProfesorDni TEXT,
+                    PrecioNoSocio REAL,
+                    ExclusivaSocios INTEGER NOT NULL,
+                    FOREIGN KEY (ProfesorDni) REFERENCES Profesores(Dni)
+                )";
+                command.ExecuteNonQuery();
+
+                // Tabla Cuotas
+                command.CommandText = @"
+                CREATE TABLE IF NOT EXISTS Cuotas (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    SocioDni TEXT NOT NULL,
+                    Monto REAL NOT NULL,
+                    FechaPago TEXT NOT NULL,
+                    FechaVencimiento TEXT NOT NULL,
+                    MetodoPago TEXT NOT NULL,
+                    Cuotas INTEGER NOT NULL,
+                    Pagada INTEGER NOT NULL,
+                    FOREIGN KEY (SocioDni) REFERENCES Socios(Dni)
+                )";
+                command.ExecuteNonQuery();
+
+                // Tabla Carnets
+                command.CommandText = @"
+                CREATE TABLE IF NOT EXISTS Carnets (
+                    NroCarnet INTEGER PRIMARY KEY,
+                    SocioDni TEXT NOT NULL,
+                    FechaEmision TEXT NOT NULL,
+                    FechaVencimiento TEXT NOT NULL,
+                    FOREIGN KEY (SocioDni) REFERENCES Socios(Dni)
+                )";
+                command.ExecuteNonQuery();
+
+
+                // Tabla AptosFisicos
+                command.CommandText = @"
+                CREATE TABLE IF NOT EXISTS AptosFisicos (
+                    SocioDni TEXT PRIMARY KEY,
+                    FechaEmision TEXT NOT NULL,
+                    FechaVencimiento TEXT NOT NULL,
+                    Medico TEXT NOT NULL,
+                    Observaciones TEXT,
+                    FOREIGN KEY (SocioDni) REFERENCES Socios(Dni)
+                )";
+                command.ExecuteNonQuery();
+
+                // Tabla de relación Socio-Actividad
+                command.CommandText = @"
+                CREATE TABLE IF NOT EXISTS SocioActividad (
+                    SocioDni TEXT NOT NULL,
+                    ActividadId INTEGER NOT NULL,
+                    PRIMARY KEY (SocioDni, ActividadId),
+                    FOREIGN KEY (SocioDni) REFERENCES Socios(Dni),
+                    FOREIGN KEY (ActividadId) REFERENCES Actividades(Id)
+                )";
+                command.ExecuteNonQuery();
+
+
+                // Tabla de relación NoSocio-Actividad
+                command.CommandText = @"
+                CREATE TABLE IF NOT EXISTS NoSocioActividad (
+                    NoSocioDni TEXT NOT NULL,
+                    ActividadId INTEGER NOT NULL,
+                    FechaPago TEXT NOT NULL,
+                    MetodoPago TEXT NOT NULL,
+                    PRIMARY KEY (NoSocioDni, ActividadId, FechaPago),
+                    FOREIGN KEY (NoSocioDni) REFERENCES NoSocios(Dni),
+                    FOREIGN KEY (ActividadId) REFERENCES Actividades(Id)
+                )";
+                command.ExecuteNonQuery();
+
+
                 // Tabla Administradores
                 command.CommandText = @"
                 CREATE TABLE IF NOT EXISTS Administradores (
@@ -74,6 +176,8 @@ namespace ClubDeportivo
                     FOREIGN KEY (Dni) REFERENCES Personas(Dni)
                 )";
                 command.ExecuteNonQuery();
+
+
             }
         }
 
